@@ -1,0 +1,71 @@
+html {
+    font-size: 62.5%;
+}
+
+body {
+    height: 97.5svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+header {
+    height: 10svh;
+    width: 100%;
+    background: rgba(255, 176, 30, 0.637);
+}
+
+header p {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+main {
+    height: 80svh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main > .board {
+    height: 45rem;
+    width: 45rem;
+    padding: 1rem;
+    background: gray;
+    display: grid;
+    grid-template-columns: repeat(3, 15rem);
+    grid-template-rows: repeat(3, 15rem);
+}
+
+.board > .cell {
+    background: orange;
+    margin: 0.25rem; 
+}
+
+.board > .cell:hover {
+    cursor: pointer;
+    opacity: 75%;
+}
+
+main > #reset {
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    padding: 0.5rem 2rem;
+}
+
+footer {
+    height: 5svh;
+    width: 100%;
+    background:rgba(255, 176, 30, 0.637);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer p {
+    font-size: 1.2rem;
+}
