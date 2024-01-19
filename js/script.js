@@ -1,8 +1,15 @@
-const gameboard = (function () {
+const gameboard = (function () {    
     const create = function () {
+        boardDiv = document.querySelector(".board");
         board = new Array(9);
         for (i=0; i<9; i++) {
-            board[i] = "dummy-" + i;
+            board[i] = i;
+            const cellDiv = document.createElement("div");
+            cellDiv.textContent = board[i];
+            cellDiv.classList.add("cell");
+            cellDiv.classList.add("blank");
+            boardDiv.appendChild(cellDiv);
+            //cellDiv.addEventListener('click', markCell());
         };
         return board;
     };
@@ -42,9 +49,4 @@ const play = (function() {
     return { isThereAWinner, isCellOccupied };
 })();
 
-// board = gameboard.create();
-// player.setMarker("X");
-// gameboard.update(board,player.getMarker(),0);
-// gameboard.update(board,player.getMarker(),4);
-// gameboard.update(board,player.getMarker(),8);
-// play.isThereAWinner(board);
+gameboard.create();
