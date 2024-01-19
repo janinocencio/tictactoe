@@ -51,6 +51,10 @@ main > .board {
     opacity: 75%;
 }
 
+.board > .blank {
+    font-size: 0rem;
+}
+
 .board > .marked {
     display: flex;
     align-items: center;
