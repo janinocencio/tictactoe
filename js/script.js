@@ -1,20 +1,25 @@
 const gameboard = (function () {    
-    const create = function () {
+    const board = new Array(9);
+    const create = function (location) {
         boardDiv = document.querySelector(".board");
-        board = new Array(9);
-        for (i=0; i<9; i++) {
-            board[i] = i;
-            const cellDiv = document.createElement("div");
-            cellDiv.textContent = board[i];
-            cellDiv.classList.add("cell");
-            cellDiv.classList.add("blank");
-            boardDiv.appendChild(cellDiv);
-            //cellDiv.addEventListener('click', markCell());
-        };
-        return board;
+        const cellDiv = document.createElement("div");
+        board[location] = location;
+        cellDiv.textContent = location;
+        cellDiv.classList.add("cell");
+        cellDiv.classList.add("blank");
+        boardDiv.appendChild(cellDiv);
+        cellDiv.addEventListener('click', () => {
+            update(board, "X", location);
+            cellDiv.textContent = "X";
+            cellDiv.classList.replace("blank", "marked");
+            console.log(location);
+            console.log(board);
+            console.log(play.isThereAWinner(board));
+        });
     };
     const update = function (board, marker, location) {
-        board[location] = marker;       
+        board[location] = marker;
+               
     };
     return { create, update };
 })();
@@ -22,8 +27,8 @@ const gameboard = (function () {
 const player = (function () {
     let marker = ""
     const setMarker = function (markerInput) {
-        if (markerInput === "x" || markerInput === "X") {marker = "x"}
-        else if (markerInput === "o" || markerInput === "O") {marker = "o"}
+        if (markerInput === "x" || markerInput === "X") {marker = "X"}
+        else if (markerInput === "o" || markerInput === "O") {marker = "O"}
         else {console.log("Enter 'x' or 'o' only.")};
     };
     const getMarker = function() {
@@ -49,4 +54,6 @@ const play = (function() {
     return { isThereAWinner, isCellOccupied };
 })();
 
-gameboard.create();
+for (i=0; i<9; i++){
+    gameboard.create(i);
+};
