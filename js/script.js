@@ -2,24 +2,23 @@ const gameboard = (function () {
     const board = new Array(9);
     const create = function (location) {
         boardDiv = document.querySelector(".board");
-        const cellDiv = document.createElement("div");
         board[location] = location;
+        const cellDiv = document.createElement("div");
         cellDiv.textContent = location;
         cellDiv.classList.add("cell");
         cellDiv.classList.add("blank");
         boardDiv.appendChild(cellDiv);
         cellDiv.addEventListener('click', () => {
-            update(board, "X", location);
-            cellDiv.textContent = "X";
-            cellDiv.classList.replace("blank", "marked");
-            console.log(location);
-            console.log(board);
-            console.log(play.isThereAWinner(board));
+            update(board, cellDiv, "X", location);
         });
     };
-    const update = function (board, marker, location) {
+    const update = function (board, cellDiv, marker, location) {
         board[location] = marker;
-               
+        cellDiv.textContent = marker;
+        cellDiv.classList.replace("blank", "marked");
+        console.log(location); //test
+        console.log(board); //test
+        console.log(play.isThereAWinner(board));               
     };
     return { create, update };
 })();
