@@ -10,6 +10,7 @@ const gameboard = (function () {
         boardDiv.appendChild(cellDiv);
         cellDiv.addEventListener('click', () => {
             update(board, cellDiv, "X", location);
+            updateComp(board);
         });
     };
     const update = function (board, cellDiv, marker, location) {
@@ -19,6 +20,12 @@ const gameboard = (function () {
         console.log(location); //test
         console.log(board); //test
         console.log(play.isThereAWinner(board));               
+    };
+    const updateComp = function (board) {
+        compIndex = play.computerEasyLocation(board);
+        nthChild = compIndex + 1;
+        cellDivNth = document.querySelector(".board > .cell:nth-child(" + nthChild + ")");
+        update(board, cellDivNth, "O", compIndex);
     };
     return { create, update };
 })();
@@ -47,10 +54,16 @@ const play = (function() {
         }
     };
     const isCellOccupied = function (board, location) {
-        return !(board[location].startsWith("dummy"));
-    }
-
-    return { isThereAWinner, isCellOccupied };
+        return !(Number.isInteger(board[location]));
+    };
+    const computerEasyLocation = function (board) {
+        compIndex = Math.floor(Math.random() * board.length);
+        while (isCellOccupied(board, compIndex)) {
+            computerEasyLocation(board);
+        }
+        return compIndex;
+    };
+    return { isThereAWinner, isCellOccupied, computerEasyLocation };
 })();
 
 for (i=0; i<9; i++){
