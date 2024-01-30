@@ -1,71 +1,98 @@
-const gameboard = (function () {    
-    const board = new Array(9);
-    const create = function (location) {
-        boardDiv = document.querySelector(".board");
-        board[location] = location;
-        const cellDiv = document.createElement("div");
-        cellDiv.textContent = location;
-        cellDiv.classList.add("cell");
-        cellDiv.classList.add("blank");
-        boardDiv.appendChild(cellDiv);
-        cellDiv.addEventListener('click', () => {
-            update(board, cellDiv, "X", location);
-            updateComp(board);
-        });
-    };
-    const update = function (board, cellDiv, marker, location) {
-        board[location] = marker;
-        cellDiv.textContent = marker;
-        cellDiv.classList.replace("blank", "marked");
-        console.log(location); //test
-        console.log(board); //test
-        console.log(play.isThereAWinner(board));               
-    };
-    const updateComp = function (board) {
-        compIndex = play.computerEasyLocation(board);
-        nthChild = compIndex + 1;
-        cellDivNth = document.querySelector(".board > .cell:nth-child(" + nthChild + ")");
-        update(board, cellDivNth, "O", compIndex);
-    };
-    return { create, update };
-})();
+(function() {
+    const gameboard = {
+        board: new Array(9),
+        playerMarker: "X",
+        computerMarker: "O",
 
-const player = (function () {
-    let marker = ""
-    const setMarker = function (markerInput) {
-        if (markerInput === "x" || markerInput === "X") {marker = "X"}
-        else if (markerInput === "o" || markerInput === "O") {marker = "O"}
-        else {console.log("Enter 'x' or 'o' only.")};
-    };
-    const getMarker = function() {
-        return marker;
-    };
-    return { setMarker, getMarker };
-})();
+        init: function() {
+            this.cacheDOM();
+            this.render();
+            this.cacheDOM(); //Re-called to capture cellDivs
+            this.bindEvents();
+        },
+        
+        cacheDOM: function() {
+            boardDiv = document.querySelector(".board");
+            cellDivs = document.querySelectorAll(".board > div");
+            resetBtn = document.querySelector("#reset");
+        },
 
-const play = (function() {
-    const isThereAWinner = function (board) {
-        for (i=0; i<3; i++) {
-            if (board[i*3] === board[(i*3)+1] && board[i*3] === board[(i*3)+2]) return true; //row
-            else if (board[i] === board[i+3] && board[i] === board[i+6]) return true; //column
-            else if (i < 2) {
-                if (board[i*2] === board[4] && board[i*2] === board[8-(i*2)]) return true; //diagonal
+        render: function() {
+            //Initial render - empty array
+            if (this.board.join("") === "") {
+                for(let i=0; i<this.board.length; i++) {
+                    this.board[i] = i;
+                    const cellDiv = document.createElement("div");
+                    cellDiv.classList.add("cell");
+                    cellDiv.classList.add("blank");
+                    boardDiv.appendChild(cellDiv);
+                }
+            //Subsequent renders    
+            } else { 
+                for(let i=0; i<this.board.length; i++) {
+                    nthChild = i + 1;
+                    cellDiv = document.querySelector(".board > div:nth-child(" + nthChild + ")");
+                    cellDiv.textContent = this.board[i];
+                    if (this.board[i] === "X" || this.board[i] === "O") { 
+                        cellDiv.classList.replace("blank", "marked") 
+                    };
+                }
+            }                    
+        },
+
+        bindEvents: function() {
+            for(let i=0; i<this.board.length; i++) {
+                cellDivs[i].addEventListener('click', () => { 
+                    this.update(this.board, this.playerMarker, i); //Player plays
+                    if (this.isThereAWinner()) this.gameEnds(this.playerMarker)
+                    else {
+                        this.update(this.board, this.computerMarker, this.getCompIndex()); //Computer plays
+                        if (this.isThereAWinner()) this.gameEnds(this.computerMarker);
+                    } 
+                });
+            };
+            resetBtn.addEventListener('click', this.reset.bind(this));
+        },
+
+        update: function(board, marker, location) {
+            board[location] = marker;
+            this.render();
+        },
+
+        getCompIndex: function() {
+            if (this.board.every(element => (element === "X" || element === "O"))) { return null }
+            else {           
+                do {
+                    compIndex = Math.floor(Math.random() * this.board.length);
+                } while (this.board[compIndex] === "X" || this.board[compIndex] === "O");
+                return compIndex;
             }
-        }
-    };
-    const isCellOccupied = function (board, location) {
-        return !(Number.isInteger(board[location]));
-    };
-    const computerEasyLocation = function (board) {
-        compIndex = Math.floor(Math.random() * board.length);
-        while (isCellOccupied(board, compIndex)) {
-            computerEasyLocation(board);
-        }
-        return compIndex;
-    };
-    return { isThereAWinner, isCellOccupied, computerEasyLocation };
-})();
+        },
 
-for (i=0; i<9; i++){
-    gameboard.create(i);
-};
+        isThereAWinner: function() {
+            for (i=0; i<3; i++) {
+                if (this.board[i*3] === this.board[(i*3)+1] && this.board[i*3] === this.board[(i*3)+2]) return true; //row
+                else if (this.board[i] === this.board[i+3] && this.board[i] === this.board[i+6]) return true; //column
+                else if (i < 2) {
+                    if (this.board[i*2] === this.board[4] && this.board[i*2] === this.board[8-(i*2)]) return true; //diagonal
+                }
+            }
+        },
+
+        reset: function() {
+            cellDivs.forEach(childDiv => childDiv.remove());
+            boardDiv.style.pointerEvents = "auto";
+            this.board = new Array(9);
+            this.init();
+        },
+
+        gameEnds: function(marker) {
+            if (marker === "X") alert("Player wins!")
+            else if (marker === "O") alert("Computer wins!");
+            boardDiv.style.pointerEvents = "none";
+        },
+    };
+
+    gameboard.init();
+
+})();
