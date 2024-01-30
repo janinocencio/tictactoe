@@ -60,6 +60,7 @@ main > .board {
     align-items: center;
     justify-content: center;
     font-size: 10rem;
+    pointer-events: none;
 }
 
 main > #reset {
